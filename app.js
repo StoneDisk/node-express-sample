@@ -3,6 +3,12 @@ const app = express();
 
 const {products} = require('./data_sources/data');
 
+// tells express that the public folder contains static assests
+app.use(express.static('./public'));
+// tells express to parse form data and access it through the request object
+app.use(express.urlencoded({extended: false}));
+
+// This default route does not work because express detects a static index.html file
 app.get("/", (req, res) => {
     res.send("<h1 style='color: blue; font-size: 3rem'>Homepage</h1>");
 });
@@ -64,6 +70,16 @@ app.get("/api/v1/productSearch/query", (req, res) => {
     }
 
     res.status(200).json(sortedProducts);
+});
+
+app.post("/login", (req, res) => {
+    const {name} = req.body;
+
+    if (name) {
+        return res.status(200).send(`Welcome ${name}`);
+    }
+
+    res.status(401).send("Please provide a valid credential.");
 });
 
 // This route is for handling bad requests
