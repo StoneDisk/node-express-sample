@@ -1,12 +1,14 @@
 const express = require('express');
 const app = express();
 
-const {products} = require('./data_sources/data');
+const {products, people} = require('./data_sources/data');
 
 // tells express that the public folder contains static assests
 app.use(express.static('./public'));
 // tells express to parse form data and access it through the request object
 app.use(express.urlencoded({extended: false}));
+// tells express to parse incoming json data
+app.use(express.json());
 
 // This default route does not work because express detects a static index.html file
 app.get("/", (req, res) => {
@@ -72,6 +74,22 @@ app.get("/api/v1/productSearch/query", (req, res) => {
     res.status(200).json(sortedProducts);
 });
 
+app.get("/api/people", (req, res) => {
+    res.status(200).json({success: true, data: people});
+});
+
+// this post route handles data provided through an html form and 
+// submitted using client side javascript
+app.post("/api/people", (req, res) => {
+    const {name} = req.body;
+    if (!name) {
+        return res.status(400).json({success: false, msg: "please provide name value"});
+    }
+    res.status(201).json({success: true, person: name});
+});
+
+// this post route handles data submitted through an html form
+// with the default browser submission process
 app.post("/login", (req, res) => {
     const {name} = req.body;
 
