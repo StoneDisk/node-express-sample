@@ -100,7 +100,31 @@ app.post("/login", (req, res) => {
     res.status(401).send("Please provide a valid credential.");
 });
 
-// This route is for handling bad requests
+// this put route updates data based on user provided id and request body 
+// then replies with the updated data in json format
+app.put("/api/people/:id", (req, res) => {
+    const {id} = req.params;
+    const {name} = req.body;
+
+    const person = people.find((person) => person.id === Number(id));
+
+    if (!person) {
+        return res
+        .status(404)
+        .json({success: false, msg: `no person with ${id}`});
+    }
+
+    const modifiedPeople = people.map((person) => {
+        if (person.id === Number(id)) {
+            person.name = name;
+        }
+        return person;
+    });
+
+    res.status(200).json({success: true, data: modifiedPeople});
+});
+
+// This route is for handling bad requests (no request matches any of the routes above)
 app.all("*", (req, res) => {
     res.status(404);
     res.send("<h1 style='color: red; font-size: 3rem'>The page your requesting does not exist!</h1>");
