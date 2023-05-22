@@ -124,6 +124,24 @@ app.put("/api/people/:id", (req, res) => {
     res.status(200).json({success: true, data: modifiedPeople});
 });
 
+// this delete route removes data based on user provided id
+// then replies with the updated data in json format
+app.delete("/api/people/:id", (req, res) => {
+    const {id} = req.params;
+
+    const person = people.find((person) => person.id === Number(id));
+
+    if (!person) {
+        return res
+        .status(404)
+        .json({success: false, msg: `no person with ${id}`});
+    }
+
+    const modifiedPeople = people.filter((person) => person.id !== Number(id));
+
+    return res.status(200).json({ success: true, data: modifiedPeople });
+});
+
 // This route is for handling bad requests (no request matches any of the routes above)
 app.all("*", (req, res) => {
     res.status(404);
